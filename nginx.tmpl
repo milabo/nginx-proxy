@@ -89,6 +89,8 @@ proxy_set_header Proxy "";
 {{ end }}
 
 {{ $enable_ipv6 := eq (or ($.Env.ENABLE_IPV6) "") "true" }}
+
+{{ if and $.Env.REMOVE_DEFAULT_SERVER (eq $.Env.REMOVE_DEFAULT_SERVER "true") }}
 server {
 	server_name _; # This is just an invalid value which will never trigger on a real hostname.
 	listen 80;
@@ -113,6 +115,7 @@ server {
 	ssl_certificate /etc/nginx/certs/default.crt;
 	ssl_certificate_key /etc/nginx/certs/default.key;
 }
+{{ end }}
 {{ end }}
 
 {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
